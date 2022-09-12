@@ -17,4 +17,5 @@
 # Others
 .env
 .idea/
+build/
 migrations/

@@ -365,11 +365,6 @@ func (p *Properties) sync() error {
 		dbase, dbaseExists := p.dbaseItems[key]
 		local, localExists := p.localItems[key]
 
-		// remove UnknownState flag from local migration
-		if localExists {
-			local.Status &= ^UnknownState
-		}
-
 		// check if migration is out of order. out of order means that
 		// pending migration is exists in the middle of applied migrations
 		if localExists && !dbaseExists && (prevState&PendingState) == 0 && prevState != UnknownState {

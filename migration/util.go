@@ -57,14 +57,14 @@ func keys[M ~map[K]V, K comparable, V any](m M) []K {
 
 func unique[T comparable](s []T) []T {
 	values := make(map[T]bool)
-	unique := make([]T, 0)
+	unq := make([]T, 0)
 	for _, value := range s {
 		if _, exists := values[value]; exists {
 			continue
 		}
 		values[value] = true
-		unique = append(unique, value)
+		unq = append(unq, value)
 	}
 
-	return unique
+	return unq
 }
