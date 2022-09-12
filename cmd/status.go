@@ -30,6 +30,6 @@ func conceptStatus() {
 	cobra.CheckErr(err)
 
 	for _, dt := range res {
-		fmt.Println(dt.ScriptName, " | ", migration.TranslateState(dt.Status))
+		fmt.Println(dt.ScriptName, ";", migration.TranslateState(dt.Status))
 	}
 }
