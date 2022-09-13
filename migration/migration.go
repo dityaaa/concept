@@ -388,9 +388,11 @@ func (p *Properties) sync() error {
 			continue
 		}
 
-		// reflect updated description from file as long as version does not change
-		dbase.ScriptName = local.ScriptName
-		dbase.Description = local.Description
+		// assume migration script is replaced if local script name is not equal
+		// with migrated script name
+		if local.ScriptName != dbase.ScriptName {
+			p.outOfOrder = true
+		}
 
 		// mark migration as future if checksum is not equal
 		if local.Checksum != dbase.Checksum {
