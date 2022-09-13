@@ -10,6 +10,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var createWithReverseFile bool
+
 var createCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new migration file",
@@ -21,15 +23,17 @@ var createCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(createCmd)
+	createCmd.Flags().BoolVar(&createWithReverseFile, "with-reverse", false, "create migration file with its reverse migration file")
 }
 
 func conceptCreate(name string) {
 	mg := newMigration(false, nil)
 
-	files, err := mg.Create(name)
+	files, err := mg.Create(name, createWithReverseFile)
 	cobra.CheckErr(err)
 
 	fmt.Println("Migration files successfully created")
-	fmt.Println(color.GreenString("✔"), files[0])
-	fmt.Println(color.GreenString("✔"), files[1])
+	for _, name := range files {
+		fmt.Println(color.GreenString("✔"), name)
+	}
 }

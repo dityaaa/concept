@@ -12,6 +12,7 @@ import (
 	"path"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -78,16 +79,30 @@ func New(config *Config) (*Properties, error) {
 	}, nil
 }
 
-func (p *Properties) Create(name string) ([]string, error) {
-	version := time.Now().Unix()
-	name = fmt.Sprintf("%d_%s", version, name)
-	// TODO: support for customizable adv/rev suffix
-	files := []string{
-		name + ".adv.sql",
-		name + ".rev.sql",
+func (p *Properties) Create(name string, rev bool) ([]string, error) {
+	err := p.readLocal()
+	if err != nil {
+		return nil, err
 	}
 
-	var err error
+	version := 1
+	if len(p.localKeys) > 0 {
+		version, _ = strconv.Atoi(p.localKeys[len(p.localKeys)-1])
+		version++
+	}
+
+	name = fmt.Sprintf("%05d_%s", version, name)
+	// TODO: support for customizable adv/rev suffix
+	files := []string{
+		name + ".sql",
+	}
+	if rev == true {
+		files = []string{
+			name + ".adv.sql",
+			name + ".rev.sql",
+		}
+	}
+
 	success := false
 	for _, filename := range files {
 		if _, err = os.Create(path.Join(p.path, filename)); err != nil {
@@ -258,7 +273,7 @@ func (p *Properties) readLocal() error {
 	versionPair := 0
 	// adv = advance; rev = revert/reverse
 	// TODO: support for customizable adv/rev suffix
-	filePattern := regexp.MustCompile(`^(\d+?)(_\w*)?\.(adv|rev).sql$`)
+	filePattern := regexp.MustCompile(`^(\d+?)(_\w*)?(?:\.(adv|rev))?.sql$`)
 	for _, entry := range entries {
 		if entry.IsDir() {
 			continue
@@ -272,6 +287,9 @@ func (p *Properties) readLocal() error {
 		version := matches[1]
 		description := strings.TrimPrefix(matches[2], "_")
 		mode := matches[3]
+		if mode == "" {
+			mode = "adv"
+		}
 
 		if versionPair > 2 && version == prevVersion {
 			return fmt.Errorf("duplicate version encountered: %s", entry.Name())
@@ -390,7 +408,7 @@ func (p *Properties) sync() error {
 
 		// assume migration script is replaced if local script name is not equal
 		// with migrated script name
-		if local.ScriptName != dbase.ScriptName {
+		if !strings.HasSuffix(dbase.ScriptName, ".rev.sql") && local.ScriptName != dbase.ScriptName {
 			p.outOfOrder = true
 		}
 
