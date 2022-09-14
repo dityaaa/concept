@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"github.com/dityaaa/concept/migration"
 	"github.com/spf13/cobra"
-	"time"
 )
 
 var migrateFresh bool
@@ -38,7 +37,6 @@ func conceptMigrate() {
 			nothingToMigrate = false
 			spinner.Message(dt.ScriptName)
 			spinner.Start()
-			time.Sleep(4 * time.Second)
 		},
 		PostMigrate: func(dt migration.Data) {
 			spinner.StopMessage(fmt.Sprintf("%s (%dms)", dt.ScriptName, dt.ExecutionTime))

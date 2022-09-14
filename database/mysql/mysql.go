@@ -61,7 +61,7 @@ func (d Driver) Read(cat string) ([]*database.Row, error) {
 		cat = "%"
 	}
 
-	query := fmt.Sprintf("SELECT * FROM `%s` WHERE `category` LIKE ?", d.table)
+	query := fmt.Sprintf("SELECT * FROM `%s` AS `h1` WHERE `h1`.`category` LIKE ? AND `h1`.`sequence` = (SELECT MAX(`h2`.`sequence`) FROM `schema_history` AS `h2` WHERE `h2`.`version` = `h1`.`version` AND `h2`.`category` = `h1`.`category`)", d.table)
 	rows, err := d.db.Query(query, cat)
 	if err != nil {
 		return nil, err

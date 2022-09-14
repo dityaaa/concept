@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"github.com/dityaaa/concept/migration"
 	"github.com/spf13/cobra"
-	"time"
 )
 
 var rollbackSteps int
@@ -37,7 +36,6 @@ func conceptRollback() {
 			nothingToRollback = false
 			spinner.Message(dt.ScriptName)
 			spinner.Start()
-			time.Sleep(4 * time.Second)
 		},
 		PostRollback: func(dt migration.Data) {
 			spinner.StopMessage(fmt.Sprintf("%s (%dms)", dt.ScriptName, dt.ExecutionTime))
