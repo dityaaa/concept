@@ -133,6 +133,11 @@ func (p *Properties) Migrate() error {
 			continue
 		}
 
+		if strings.HasSuffix(mg.ScriptName, ".rev.sql") {
+			mg.ScriptName = strings.TrimSuffix(mg.ScriptName, ".rev.sql")
+			mg.ScriptName = mg.ScriptName + ".adv.sql"
+		}
+
 		file, err := os.ReadFile(filepath.Join(p.path, mg.ScriptName))
 		if err != nil {
 			p.hooks.MigrateErr(*mg, err)
@@ -141,7 +146,7 @@ func (p *Properties) Migrate() error {
 
 		p.hooks.PreMigrate(*mg)
 
-		row, err := p.db.Insert("ADV", string(mg.Version), mg.ScriptName, mg.Description, mg.Checksum)
+		row, err := p.db.Insert("ADV", mg.Version, mg.ScriptName, mg.Description, mg.Checksum)
 		if err != nil {
 			p.hooks.MigrateErr(*mg, err)
 			return err
