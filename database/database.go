@@ -9,13 +9,7 @@ import (
 	_ "embed"
 )
 
-type Driver rune
-
-const (
-	MySQLDriver Driver = iota
-)
-
-type Row struct {
+type LegacyRowData struct {
 	Sequence      uint64
 	Category      string
 	Version       string
@@ -28,7 +22,7 @@ type Row struct {
 	Success       bool
 }
 
-type Config struct {
+type LegacyConfig struct {
 	Driver   Driver
 	Host     string
 	Port     uint32
@@ -42,13 +36,13 @@ type Config struct {
 }
 
 type Database interface {
-	Read(cat string) ([]*Row, error)
-	Insert(cat, ver string, name string, desc string, checksum string) (*Row, error)
+	Read(cat string) ([]*LegacyRowData, error)
+	Insert(cat, ver string, name string, desc string, checksum string) (*LegacyRowData, error)
 	Update(seq uint64, execTime uint32, success bool) error
 	Exec(script string) error
 }
 
-func New(config *Config) (*Config, error) {
+func New(config *LegacyConfig) (*LegacyConfig, error) {
 	if config.Host == "" {
 		config.Host = "localhost"
 	}

@@ -27,9 +27,9 @@ func init() {
 }
 
 func conceptCreate(name string) {
-	mg := newMigration(false, nil)
+	con := newConcept(true, nil)
 
-	files, err := mg.Create(name, createWithReverseFile)
+	files, err := con.Create(name, createWithReverseFile)
 	cobra.CheckErr(err)
 
 	fmt.Println("Migration files successfully created")

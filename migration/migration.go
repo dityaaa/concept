@@ -133,6 +133,10 @@ func (p *Properties) Migrate() error {
 			continue
 		}
 
+		if mg.Status&FailedState > 0 {
+			return fmt.Errorf("last database migration is failed. manual cleaning needed at version: %s", mg.Version)
+		}
+
 		if strings.HasSuffix(mg.ScriptName, ".rev.sql") {
 			mg.ScriptName = strings.TrimSuffix(mg.ScriptName, ".rev.sql")
 			mg.ScriptName = mg.ScriptName + ".adv.sql"
@@ -413,7 +417,7 @@ func (p *Properties) sync() error {
 
 		// assume migration script is replaced if local script name is not equal
 		// with migrated script name
-		if !strings.HasSuffix(dbase.ScriptName, ".rev.sql") && local.ScriptName != dbase.ScriptName {
+		if !strings.HasSuffix(local.ScriptName, ".rev.sql") && local.ScriptName != dbase.ScriptName {
 			p.outOfOrder = true
 		}
 

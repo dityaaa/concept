@@ -1,0 +1,17 @@
+# sss
+environment: development
+
+# sss
+migration-path: ./migrations-backup
+
+# sss
+history-table: schema_history
+locking-table: schema_locking
+
+driver:
+  mysql:
+    host: horizon.local
+    port: 3306
+    username: concept
+    password: concept
+    database: concept_local_test4

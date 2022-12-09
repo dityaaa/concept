@@ -6,7 +6,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/dityaaa/concept/migration"
+	"github.com/dityaaa/concept"
 	"github.com/spf13/cobra"
 )
 
@@ -24,12 +24,12 @@ func init() {
 
 func conceptStatus() {
 	fmt.Println("Preparing...")
-	mg := newMigration(true, nil)
+	mg := newConcept(true, nil)
 
 	res, err := mg.Get()
 	cobra.CheckErr(err)
 
 	for _, dt := range res {
-		fmt.Println(dt.ScriptName, ";", migration.TranslateState(dt.Status))
+		fmt.Println(dt.AdvanceScript.Identifier, ";", concept.TranslateState(dt.State))
 	}
 }

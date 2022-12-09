@@ -7,7 +7,7 @@ package cmd
 import (
 	_ "embed"
 	"fmt"
-	"github.com/dityaaa/concept/migration"
+	"github.com/dityaaa/concept"
 	"github.com/spf13/cobra"
 )
 
@@ -32,23 +32,23 @@ func conceptMigrate() {
 	nothingToMigrate := true
 	fmt.Println("Preparing...")
 
-	mg := newMigration(true, &migration.Hooks{
-		PreMigrate: func(dt migration.Data) {
+	con := newConcept(true, &concept.Hooks{
+		PreMigrate: func(mg *concept.Migration) {
 			nothingToMigrate = false
-			spinner.Message(dt.ScriptName)
+			spinner.Message(mg.AdvanceScript.Identifier)
 			spinner.Start()
 		},
-		PostMigrate: func(dt migration.Data) {
-			spinner.StopMessage(fmt.Sprintf("%s (%dms)", dt.ScriptName, dt.ExecutionTime))
+		PostMigrate: func(mg *concept.Migration) {
+			spinner.StopMessage(fmt.Sprintf("%s (%dms)", mg.AdvanceScript.Identifier, mg.ExecutionTime))
 			spinner.Stop()
 		},
-		MigrateErr: func(dt migration.Data, err error) {
-			spinner.StopFailMessage(fmt.Sprintf("%s (%dms)", dt.ScriptName, dt.ExecutionTime))
+		MigrateErr: func(mg *concept.Migration, err error) {
+			spinner.StopFailMessage(fmt.Sprintf("%s (%dms)", mg.AdvanceScript.Identifier, mg.ExecutionTime))
 			spinner.StopFail()
 		},
 	})
 
-	err := mg.Migrate()
+	err := con.Migrate(-1)
 	if err != nil {
 		spinner.StopFail()
 		cobra.CheckErr(err)

@@ -6,7 +6,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/dityaaa/concept/migration"
+	"github.com/dityaaa/concept"
 	"github.com/spf13/cobra"
 )
 
@@ -31,23 +31,23 @@ func conceptRollback() {
 	nothingToRollback := true
 	fmt.Println("Preparing...")
 
-	mg := newMigration(true, &migration.Hooks{
-		PreRollback: func(dt migration.Data) {
+	con := newConcept(true, &concept.Hooks{
+		PreMigrate: func(mg *concept.Migration) {
 			nothingToRollback = false
-			spinner.Message(dt.ScriptName)
+			spinner.Message(mg.AdvanceScript.Identifier)
 			spinner.Start()
 		},
-		PostRollback: func(dt migration.Data) {
-			spinner.StopMessage(fmt.Sprintf("%s (%dms)", dt.ScriptName, dt.ExecutionTime))
+		PostMigrate: func(mg *concept.Migration) {
+			spinner.StopMessage(fmt.Sprintf("%s (%dms)", mg.AdvanceScript.Identifier, mg.ExecutionTime))
 			spinner.Stop()
 		},
-		RollbackErr: func(dt migration.Data, err error) {
-			spinner.StopFailMessage(fmt.Sprintf("%s (%dms)", dt.ScriptName, dt.ExecutionTime))
+		MigrateErr: func(mg *concept.Migration, err error) {
+			spinner.StopFailMessage(fmt.Sprintf("%s (%dms)", mg.AdvanceScript.Identifier, mg.ExecutionTime))
 			spinner.StopFail()
 		},
 	})
 
-	err := mg.Rollback(rollbackSteps)
+	err := con.Rollback(rollbackSteps)
 	if err != nil {
 		spinner.StopFail()
 		cobra.CheckErr(err)

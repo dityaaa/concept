@@ -4,7 +4,9 @@
 
 package main
 
-import "github.com/dityaaa/concept/internal/cmd"
+import (
+	"github.com/dityaaa/concept/internal/cmd"
+)
 
 func main() {
 	cmd.Execute()

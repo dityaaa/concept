@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-func translate(r []*database.Row) map[string]*Data {
+func translate(r []*database.LegacyRowData) map[string]*Data {
 	result := make(map[string]*Data, 0)
 	for _, row := range r {
 		data := &Data{
